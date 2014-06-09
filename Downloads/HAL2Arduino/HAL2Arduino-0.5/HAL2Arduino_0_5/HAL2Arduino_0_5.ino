@@ -179,8 +179,8 @@ The serial link works as follows:
 
 // When asked, request access to these commands.
 //#define commandsRequested "215 224 231 233" // 229"
-#define commandsRequested "215 224 226 231 233"
-//#define commandsRequested ""
+//#define commandsRequested "215 224 226 231 233"
+#define commandsRequested ""
 // When asked, request access to these axises (for commands that use them).
 #define axisRequested "0 1 2"
 
