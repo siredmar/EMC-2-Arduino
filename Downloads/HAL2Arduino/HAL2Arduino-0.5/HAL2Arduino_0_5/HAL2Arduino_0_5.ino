@@ -179,17 +179,17 @@ The serial link works as follows:
 
 // When asked, request access to these commands.
 //#define commandsRequested "215 224 231 233" // 229"
-//#define commandsRequested "215 224 226 231 233"
-#define commandsRequested ""
+#define commandsRequested "215 224 226 231 233"
+//#define commandsRequested ""
 // When asked, request access to these axises (for commands that use them).
 #define axisRequested "0 1 2"
 
 // A command transmitted from the host needs time to be completed.
-#define statementTimeout 5 // milliSeconds we should listen (per word) before acting.
+#define statementTimeout 5	// milliSeconds we should listen (per word) before acting.
 
 
 // Setup some variables needed by HAL2Arduino and/or it modFiles.
-boolean canMove=1;
+boolean canMove = 1;
 long transId;
 long command;
 long dataOne;
@@ -197,7 +197,7 @@ long dataTwo;
 long checksum;
 double targetPos[9];
 double targetPosOld[9];
-boolean clientOps=true; // Host will set to true when ready.
+boolean clientOps = true;	// Host will set to true when ready.
 
   ///////////////////////
  // Utility functions //
@@ -205,13 +205,15 @@ boolean clientOps=true; // Host will set to true when ready.
 
 
 // Search a string for match, returns T/F
-bool stringSearch(String s,String search) {
-  int maxLen=s.length()-search.length();
-  for (int i=0;i<=maxLen;i++){
-    if(s.substring(i,i+search.length())==search){
-      return true;}
+bool stringSearch(String s, String search)
+{
+    int maxLen = s.length() - search.length();
+    for (int i = 0; i <= maxLen; i++) {
+	if (s.substring(i, i + search.length()) == search) {
+	    return true;
+	}
     }
-  return false;
+    return false;
 }
 
 
@@ -219,28 +221,28 @@ bool stringSearch(String s,String search) {
 // Finds the distance between two points on a line.
 // Returns a positive value.
 unsigned long getDist(long a, long b)
-{ // find distance between to integers.
-  unsigned long c=0;
-  if(a<0&&b<0){ // both neg.
-    if(a<b){
-      c=b-a;
-    }else{
-      c=a-b;
+{				// find distance between to integers.
+    unsigned long c = 0;
+    if (a < 0 && b < 0) {	// both neg.
+	if (a < b) {
+	    c = b - a;
+	} else {
+	    c = a - b;
+	}
     }
-  }
-  if(a<0&&b>=0){ // neg a, pos b.
-    c=b-a;
-  }
-  if(a>=0&&b<0){ // pos a, neg b.
-    c=a-b;
-  }
-  if(a>=0&&b>=0){ // both pos.
-    if(a<b){
-      c=b-a;
-    }else{
-      c=a-b;
+    if (a < 0 && b >= 0) {	// neg a, pos b.
+	c = b - a;
     }
-  }
-  return c; // a positive integer.
+    if (a >= 0 && b < 0) {	// pos a, neg b.
+	c = a - b;
+    }
+    if (a >= 0 && b >= 0) {	// both pos.
+	if (a < b) {
+	    c = b - a;
+	} else {
+	    c = a - b;
+	}
+    }
+    return c;			// a positive integer.
 }
 
