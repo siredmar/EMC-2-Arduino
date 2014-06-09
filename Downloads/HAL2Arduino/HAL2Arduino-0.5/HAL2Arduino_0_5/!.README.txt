@@ -1,0 +1,4 @@
+Using the Arduino IDE:
+
+Load the HAL2Arduino_0_5.ino file.
+All the other files will automatically show up as 'tabs' within the main window.

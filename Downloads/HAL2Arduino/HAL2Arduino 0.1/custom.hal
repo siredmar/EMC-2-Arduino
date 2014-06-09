@@ -1,0 +1,20 @@
+
+#First load the Python user module named /user/bin/9axis_ahal with the name 'ahal'
+loadusr -Wn ahal /home/dewy/Desktop/my-mill/aahal7.py
+
+#Second 'unlinkp' our pins to make them available for use.
+# Then use 'net' to recreate/hook into them.
+#  Comment out any sections that your machine doesn't have.
+
+#unlinkp axis.0.motor-pos-cmd
+#net xpos-cmd axis.0.motor-pos-cmd ahal.axis_0_motor-pos-cmd 
+
+#unlinkp axis.1.motor-pos-cmd
+#net ypos-cmd axis.1.motor-pos-cmd ahal.axis_1_motor-pos-cmd
+
+#unlinkp axis.2.motor-pos-cmd
+#net zpos-cmd axis.2.motor-pos-cmd ahal.axis_2_motor-pos-cmd
+
+net xpos-cmd ahal.axis_0_motor-pos-cmd 
+net ypos-cmd ahal.axis_1_motor-pos-cmd
+net zpos-cmd ahal.axis_2_motor-pos-cmd

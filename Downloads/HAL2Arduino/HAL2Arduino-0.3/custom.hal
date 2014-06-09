@@ -1,0 +1,19 @@
+#First load the Python user module named /user/bin/9axis_Hal2Arduino with the name 'Hal2Arduino'
+loadusr -Wn Hal2Arduino /home/dewy/Desktop/my-mill/HAL2Arduino-0.3.py
+
+#Second 'unlinkp' our pins to make them available for use.
+# Then use 'net' to recreate/hook into them.
+#  Comment out any sections that your machine doesn't have.
+
+#unlinkp axis.0.motor-pos-cmd
+#net xpos-cmd axis.0.motor-pos-cmd Hal2Arduino.axis_0_motor-pos-cmd 
+
+#unlinkp axis.1.motor-pos-cmd
+#net ypos-cmd axis.1.motor-pos-cmd Hal2Arduino.axis_1_motor-pos-cmd
+
+#unlinkp axis.2.motor-pos-cmd
+#net zpos-cmd axis.2.motor-pos-cmd Hal2Arduino.axis_2_motor-pos-cmd
+
+net xpos-cmd Hal2Arduino.axis_0_motor-pos-cmd 
+net ypos-cmd Hal2Arduino.axis_1_motor-pos-cmd
+net zpos-cmd Hal2Arduino.axis_2_motor-pos-cmd

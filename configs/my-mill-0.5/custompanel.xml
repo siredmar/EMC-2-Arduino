@@ -1,0 +1,20 @@
+<vbox>
+	<hbox>
+		<led>
+			<halpin>"spindle-cw-led-measured"</halpin>
+			<size>15</size>
+			<on_color>"red"</on_color>
+			<off_color>"green"</off_color>
+		</led>
+		<label>
+			<text>"CW(green) CCW(red)"</text>
+		</label>
+	</hbox>
+	<label>
+		<text>"Spindle Speed Ist:"</text>
+	</label>
+	<bar>
+		<halpin>"spindle-speed-measured"</halpin>
+		<max_>3000</max_>
+	</bar>
+</vbox>
