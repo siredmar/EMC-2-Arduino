@@ -346,7 +346,6 @@ void processCommand(long command, long dataOne, long dataTwo)
 		    Serial.println("Debug: off");
 #endif
 		}
-		Serial.println("ok");
 	    } else if (command == 996) {	// Got 'green light' from host to begin normal operations.
 		clientOps = true;
 		/*
