@@ -20,16 +20,7 @@ void setup()
 
 long checksumOld = 0;
 boolean debug = false;
-#if modLcd
-lcdSetup();
-#endif
-#if useAccelStepper
-stepperSetup();
-#endif
 
-Serial.begin(BAUD);
-Serial.setTimeout(statementTimeout);
-Serial.println("ok");
 void processCommand(long command, long dataOne, long dataTwo)
 {
     if (command + dataOne + dataTwo != checksumOld) {
