@@ -65,34 +65,34 @@ AccelStepper stprV(1, 99, 99);
 AccelStepper stprW(1, 99, 99);
 #endif
 
-/////Doing some math here. Just skip past it.
-//  #if stepperX
-//    float stpsPrInX=10000.0/stepsPerInchX;
-//  #endif
-//  #if stepperY
-//    float stpsPrInY=10000.0/stepsPerInchY;
-//  #endif
-//  #if stepperZ
-//    float stpsPrInZ=10000.0/stepsPerInchZ;
-//  #endif
-//  #if stepperA
-//    float stpsPrInA=10000.0/stepsPerInchA;
-//  #endif
-//  #if stepperB
-//    float stpsPrInB=10000.0/stepsPerInchB;
-//  #endif
-//  #if stepperC
-//    float stpsPrInC=10000.0/stepsPerInchC;
-//  #endif
-//  #if stepperU
-//    float stpsPrInU=10000.0/stepsPerInchU;
-//  #endif
-//  #if stepperV
-//    float stpsPrInV=10000.0/stepsPerInchV;
-//  #endif
-//  #if stepperW
-//    float stpsPrInW=10000.0/stepsPerInchW;
-//  #endif
+///Doing some math here. Just skip past it.
+  #if stepperX
+    float stpsPrInX=10000.0/stepsPerInchX;
+  #endif
+  #if stepperY
+    float stpsPrInY=10000.0/stepsPerInchY;
+  #endif
+  #if stepperZ
+    float stpsPrInZ=10000.0/stepsPerInchZ;
+  #endif
+  #if stepperA
+    float stpsPrInA=10000.0/stepsPerInchA;
+  #endif
+  #if stepperB
+    float stpsPrInB=10000.0/stepsPerInchB;
+  #endif
+  #if stepperC
+    float stpsPrInC=10000.0/stepsPerInchC;
+  #endif
+  #if stepperU
+    float stpsPrInU=10000.0/stepsPerInchU;
+  #endif
+  #if stepperV
+    float stpsPrInV=10000.0/stepsPerInchV;
+  #endif
+  #if stepperW
+    float stpsPrInW=10000.0/stepsPerInchW;
+  #endif
 
 
 
