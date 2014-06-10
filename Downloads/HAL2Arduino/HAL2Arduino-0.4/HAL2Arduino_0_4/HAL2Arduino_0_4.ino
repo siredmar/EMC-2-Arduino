@@ -179,23 +179,23 @@ The serial link works as follows:
 #define axisRequested "0 1 2"
 
 // A command transmitted from the host needs time to be completed.
-#define statementTimeout 5 // milliSeconds we should listen (per word) before acting.
+#define statementTimeout 5	// milliSeconds we should listen (per word) before acting.
 
 
 // Setup some variables needed by HAL2Arduino and/or it modFiles.
-boolean canMove=1;
+boolean canMove = 1;
 long transId;
 long command;
 long dataOne;
 long dataTwo;
 long checksum;
-long xTargetPos=-1;
-long yTargetPos=-1;
-long zTargetPos=-1;
-long aTargetPos=-1;
-long bTargetPos=-1;
-long cTargetPos=-1;
-long uTargetPos=-1;
-long vTargetPos=-1;
-long wTargetPos=-1;
-boolean clientOps=false; // Host will set to true when ready.
+long xTargetPos = -1;
+long yTargetPos = -1;
+long zTargetPos = -1;
+long aTargetPos = -1;
+long bTargetPos = -1;
+long cTargetPos = -1;
+long uTargetPos = -1;
+long vTargetPos = -1;
+long wTargetPos = -1;
+boolean clientOps = false;	// Host will set to true when ready.
