@@ -118,105 +118,113 @@ def comThread(port):
     global threadsRun
     global masterRx
     try:
-        ser = Serial(port, 115200, timeout=0.05)
-        sleep(2.25) # Wait for arduino to boot.....
-        linkMsg = ser.readline()
-        if linkMsg.find('ok') > -1:
-            listOfPorts.append(port)
-            clientQueueArray.append(Queue(maxQueSize))
-            print "Found device on %s\nAsking for firmware info." % port
-            print "Firmware:",
-            if comSetup(ser, 990, 0, 0) == firmware:
-                print firmware
-                unitId=comSetup(ser, 992, 0, 0)
-                if unitId != "":
-                    print "Unit: %r" % unitId
-                    listOfUnits.append(unitId)
-                print "Version: ",
-                version=float(comSetup(ser, 991, 0, 0))
-                if version >= firmwareVersion:
-                    print "%.1f" % version
-                    codesAccepted = comSetup(ser, 993, 0, 0)
-                    listOfCommands.append(codesAccepted)
-                    axisesRequested = comSetup(ser, 994, 0, 0)
-                    listOfAxis.append(axisesRequested)
-                    commandList.append("")
-                    #locate this unit's position within the arrays.
-                    for n in range(0,len(listOfPorts)):
-                        if listOfPorts[n] == port:
-                            arrayPos=n
-                            pMsg=str(clientQueueArray[n])
-                            pMsg=pMsg.replace('<Queue.Queue instance at ', '')
-                            pMsg=pMsg.rstrip('>')
-                            print "comThread: port=%s\tarrayPos:%s\tQueue:%s" % (port,n,pMsg)
-                    clientQueue=clientQueueArray[arrayPos]
-                    # Client init complete. Proceed to operational loop.
-                    while threadsRun == True:
-                        while ser.inWaiting() > 0: # Listen for incomming data when txBuffer is empty
-                            linkMsg = ser.readline()
-                            if linkMsg.find('\r\n') > -1: # is message comeplete with EOL string.
-                                linkMsg=linkMsg.rstrip('\r\n') # Omit EOL string from message.
-                                masterRx.put(linkMsg) # return filtered data to main buffer for processing.
-                                print "comThread: Received %s" % linkMsg
-                                lnkMsgPart = ""
-                            else:
-                                linkMsgPart = linkMsgPart+linkMsg 
-                        while not clientQueue.empty(): # txBuffer has data, filter it, then perhaps send it out and listen to reponse.
-                            lastCommand=clientQueue.get()
-                            thisCmdString=lastCommand.rstrip(";")
-                            thisCmd=thisCmdString.split()
-                            cmd=int(thisCmd[0])
-                            #Is this command a '900' series (device query)?
-                            if cmd > 899 and cmd < 1000:
-                                send=True
-                            #Or is this command specifically supported by this device?
-                            elif codesAccepted.find(str(cmd)) > -1:
-                                send=True
-                            #I know, maybe its an '800' command for clientside global broadcasts?
-                            # ie. "800 807 1 1608" aka: Ok(800), who has coffeePot(807), anybody?(0), seriously(1607)
-                            # ie2: Unit 12 could respond with "800 807 12 1619;" aka: Yells out blindly(800), Coffee making brought to you by Unit (12), just sayin'(1619).
-                            elif cmd == 800:
-                                send=True
-                            #Could this be a custom "801~899" command to this unit's Id? (For targeted data transmissions.)
-                            # ie, User pendant issues something like "807 12 1 820;" (Aka: "Hey unit=12,  cmd=makeCoffee, value=1(yes), checksum=Thanx)
-                            elif cmd > 800 and cmd < 900 and unitId.find(thisCmd[1]) > -1:
-                                send=True
-                            #Nope. Just some spam in the buffer, don't waste bandwidth on it.
-                            else:
-                                send=False
-                            if send:
-                                ser.write(lastCommand)
-                                for i in range(0,6): # attemp to send a command, but no more then 5 times.
-                                    sleep(0.005) # Give the Arduino 5 millisec (per attempt) to respond.
-                                    linkMsg = ser.readline()
-                                    if linkMsg.find('resend') > -1: # received a "What?" from Arduino.
-                                        ser.flushInput() # possibly some garbage too. So pitch it.
-                                        print "comThread: Re-sending %s to %s" % (lastCommand, port)
-                                        ser.write(lastCommand)
-                                    else: # Command sent successfully, report result only once.
-#                                        print "comThread: Sent %s to %s" % (lastCommand, port)
-                                        if linkMsg.find(';\r\n') > -1: # is message comeplete with EOL string.
-                                            linkMsg=linkMsg.rstrip(';\r\n') # Omit EOL string from message.
-                                            masterRx.put(linkMsg) # return filtered data to main buffer for processing.
-                                            print "comThread: Received %s" % linkMsg
-                                        break
-                                        commandList[arrayPos] = ""
-                            clientQueue.task_done()
-                        if not threadsRun:
-                            print "Closing port: %s" % port
-                            ser.close()
-                            exit()
-                else:
-                    msgBox("\aConnection Error:\nUnit %s needs firmware version %s or higher." % (unitId, firmwareVersion))
-                    threadsRun=False
-                    print "Failed. Unit %s needs firmware version %s or higher." % (unitId, firmwareVersion)
-                    ser.close()
-                    raise SystemExit
-#                    exit()
+        ser = Serial(port, 115200, timeout=3)
+#        sleep(.25) # Wait for arduino to boot.....
+        okFound = False
+        while okFound == False:
+            print "while loop"
+            linkMsg = ser.readline()
+            if linkMsg.find('ok') == -1:
+                okFound = True
+                #break
+            print "linkMsg: %s" % linkMsg
+            sleep(0.1)
+        
+        listOfPorts.append(port)
+        clientQueueArray.append(Queue(maxQueSize))
+        print "Found device on %s\nAsking for firmware info." % port
+        print "Firmware:",
+        if comSetup(ser, 990, 0, 0) == firmware:
+            print firmware
+            unitId=comSetup(ser, 992, 0, 0)
+            if unitId != "":
+                print "Unit: %r" % unitId
+                listOfUnits.append(unitId)
+            print "Version: ",
+            version=float(comSetup(ser, 991, 0, 0))
+            if version >= firmwareVersion:
+                print "%.1f" % version
+                codesAccepted = comSetup(ser, 993, 0, 0)
+                listOfCommands.append(codesAccepted)
+                axisesRequested = comSetup(ser, 994, 0, 0)
+                listOfAxis.append(axisesRequested)
+                commandList.append("")
+                #locate this unit's position within the arrays.
+                for n in range(0,len(listOfPorts)):
+                    if listOfPorts[n] == port:
+                        arrayPos=n
+                        pMsg=str(clientQueueArray[n])
+                        pMsg=pMsg.replace('<Queue.Queue instance at ', '')
+                        pMsg=pMsg.rstrip('>')
+                        print "comThread: port=%s\tarrayPos:%s\tQueue:%s" % (port,n,pMsg)
+                clientQueue=clientQueueArray[arrayPos]
+                # Client init complete. Proceed to operational loop.
+                while threadsRun == True:
+                    while ser.inWaiting() > 0: # Listen for incomming data when txBuffer is empty
+                        linkMsg = ser.readline()
+                        if linkMsg.find('\r\n') > -1: # is message comeplete with EOL string.
+                            linkMsg=linkMsg.rstrip('\r\n') # Omit EOL string from message.
+                            masterRx.put(linkMsg) # return filtered data to main buffer for processing.
+                            print "comThread: Received %s" % linkMsg
+                            lnkMsgPart = ""
+                        else:
+                            linkMsgPart = linkMsgPart+linkMsg 
+                    while not clientQueue.empty(): # txBuffer has data, filter it, then perhaps send it out and listen to reponse.
+                        lastCommand=clientQueue.get()
+                        thisCmdString=lastCommand.rstrip(";")
+                        thisCmd=thisCmdString.split()
+                        cmd=int(thisCmd[0])
+                        #Is this command a '900' series (device query)?
+                        if cmd > 899 and cmd < 1000:
+                            send=True
+                        #Or is this command specifically supported by this device?
+                        elif codesAccepted.find(str(cmd)) > -1:
+                            send=True
+                        #I know, maybe its an '800' command for clientside global broadcasts?
+                        # ie. "800 807 1 1608" aka: Ok(800), who has coffeePot(807), anybody?(0), seriously(1607)
+                        # ie2: Unit 12 could respond with "800 807 12 1619;" aka: Yells out blindly(800), Coffee making brought to you by Unit (12), just sayin'(1619).
+                        elif cmd == 800:
+                            send=True
+                        #Could this be a custom "801~899" command to this unit's Id? (For targeted data transmissions.)
+                        # ie, User pendant issues something like "807 12 1 820;" (Aka: "Hey unit=12,  cmd=makeCoffee, value=1(yes), checksum=Thanx)
+                        elif cmd > 800 and cmd < 900 and unitId.find(thisCmd[1]) > -1:
+                            send=True
+                        #Nope. Just some spam in the buffer, don't waste bandwidth on it.
+                        else:
+                            send=False
+                        if send:
+                            ser.write(lastCommand)
+                            for i in range(0,6): # attemp to send a command, but no more then 5 times.
+                                sleep(0.005) # Give the Arduino 5 millisec (per attempt) to respond.
+                                linkMsg = ser.readline()
+                                if linkMsg.find('resend') > -1: # received a "What?" from Arduino.
+                                    ser.flushInput() # possibly some garbage too. So pitch it.
+                                    print "comThread: Re-sending %s to %s" % (lastCommand, port)
+                                    ser.write(lastCommand)
+                                else: # Command sent successfully, report result only once.
+#                                    print "comThread: Sent %s to %s" % (lastCommand, port)
+                                    if linkMsg.find(';\r\n') > -1: # is message comeplete with EOL string.
+                                        linkMsg=linkMsg.rstrip(';\r\n') # Omit EOL string from message.
+                                        masterRx.put(linkMsg) # return filtered data to main buffer for processing.
+                                        print "comThread: Received %s" % linkMsg
+                                    break
+                                    commandList[arrayPos] = ""
+                        clientQueue.task_done()
+                    if not threadsRun:
+                        print "Closing port: %s" % port
+                        ser.close()
+                        exit()
             else:
-                print "Failed. %s not found on this device\n" % firmware
+                msgBox("\aConnection Error:\nUnit %s needs firmware version %s or higher." % (unitId, firmwareVersion))
+                threadsRun=False
+                print "Failed. Unit %s needs firmware version %s or higher." % (unitId, firmwareVersion)
                 ser.close()
-                exit()
+                raise SystemExit
+#                exit()
+        else:
+            print "Failed. %s not found on this device\n" % firmware
+            ser.close()
+            exit()
     except Exception:
         if not threadsRun:
             ser.close()
@@ -1967,7 +1975,7 @@ def makePins(codesAccepted, axisesRequested):
 
 try:
     for i in range(0, maxClients - 1):
-        port = "/dev/ttyUSB0" + str(i)
+        port = "/dev/ttyUSB" + str(i)
         start_new_thread(comThread, (port, ) )
         sleep(0.1)
     sleep(3)
